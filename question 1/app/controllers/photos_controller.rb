@@ -17,8 +17,6 @@ class PhotosController < ApplicationController
   end
 
   def new
-    @user = User.find(params[:user_id])
-    @photo = Photo.create()
   end
 
   private
