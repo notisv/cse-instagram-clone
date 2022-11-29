@@ -1,0 +1,10 @@
+%h1 Would you like to follow some of these users?
+%table#users
+  %tbody
+    - @not_current_user.each do |user|
+      %tr
+        %td.bold= user.email
+        %td= button_to 'Follow', {:controller => 'follows', :action => 'create', :followee_id => user.id}, {:method => :post }
+
+%br
+= link_to 'Back to home view', user_path(current_user)
