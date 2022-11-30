@@ -1,0 +1,12 @@
+%h1 Would you like to follow some of these users?
+%table
+  %tbody
+    - @not_current_user.each do |user|
+      %tr
+        %td.bold= user.email
+        %td= button_to 'Follow', {:controller => 'follows', :action => 'create', :followee_id => user.id}, {:method => :post }
+        -#%td= button_to 'Unfollow', {:controller => 'follows', :action => 'destroy', :followee_id => user.id}, {:method => :delete }
+        -#%td= link_to "Follow", @follow, method: :create, class: 'btn btn-success'
+        -#%td= link_to "Unfollow", @unfollow, method: :destroy, class: 'btn btn-danger', data: {confirm: 'Are you sure you want to unfollow this user?'}
+%br
+= link_to 'Back to home view', user_path(current_user)
