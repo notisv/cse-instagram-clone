@@ -1,0 +1,51 @@
+.row.top_row
+  %h1.title Treegram - Show off to the world!
+  .col-sm-6.user_att
+    %h2= @user.email
+    - if @user.avatar_file_name
+      = image_tag @user.avatar.url(:thumb)
+  .col-sm-6
+    = link_to 'Logout', log_out_path, class: ['btn', 'btn-danger', 'logout_btn']
+  .row
+    = link_to 'Share a photo!', new_user_photo_path(@user), class: ['btn', 'btn-success', 'add_photo_btn']
+    = link_to 'Follow people!', user_follows_path(@user), class: ['btn', 'btn-primary', 'follow_users_btn']
+%br/
+.row
+  - @user_network.each do |user|
+    - user_photos = user.photos.sort.reverse
+    - if user_photos.any?
+      .well.col-sm-7
+        - if user == current_user
+          %h2.text My photos:
+        - else
+          %h2.text= user.email
+        %img
+          -# Display each photo
+          - user_photos.each do |photo|
+            %h3.text= photo.title
+            %img{alt: photo.title, src: photo.image.url(:medium)}
+            -# Tag form
+            -# Can only tag our own photos
+            - if user.id.equal?(current_user.id)
+              = form_for @tag do |f|
+                = f.hidden_field :photo_id, value: photo.id
+                = f.collection_select :user_id, @users, :id, :email
+                = f.submit "Tag User"
+              Tagged users:
+            - photo.tags.each do |tag|
+              - if tag.equal?(photo.tags.last)
+                = tag.user.email
+              - else
+                = tag.user.email + ","
+            -# Add a comment
+            = button_to "Add a comment!", new_user_photo_comment_path(photo_id: photo.id, user_id: current_user.id), method: :get, :class => "btn btn-primary"
+            -# Delete button
+            - if user.id.equal?(current_user.id)
+              = button_to "Delete post", user_photo_path(photo_id: photo.id, user_id: current_user.id), method: :delete, :class => "btn btn-danger"
+            -# Display comments
+            Comments:
+            - photo.comments.each do |c|
+              %br
+              %span.badge.badge-secondary
+                #{c.user.email}
+              = c.context
