@@ -10,20 +10,11 @@
     = link_to 'Share a photo!', new_user_photo_path(@user), class: ['btn', 'btn-success', 'add_photo_btn']
     = link_to 'Follow people!', user_follows_path(@user), class: ['btn', 'btn-primary', 'follow_users_btn']
 %br/
-%br/
-%br/
-%br/
-%br/
-%br/
-%br/
-%br/
-%br/
-%br/
 .row
   - @user_network.each do |user|
     - user_photos = user.photos.sort.reverse
     - if user_photos.any?
-      .well.col-sm-8
+      .well.col-sm-7
         - if user == current_user
           %h2.text My photos:
         - else
@@ -34,15 +25,21 @@
             %h3.text= photo.title
             %img{alt: photo.title, src: photo.image.url(:medium)}
             -# Tag form
-            = form_for @tag do |f|
-              = f.hidden_field :photo_id, value: photo.id
-              = f.collection_select :user_id, @users, :id, :email
-              = f.submit "Tag User"
+            - if user.id.equal?(current_user.id)
+              = form_for @tag do |f|
+                = f.hidden_field :photo_id, value: photo.id
+                = f.collection_select :user_id, @users, :id, :email
+                = f.submit "Tag User"
+              Tagged users:
             - photo.tags.each do |tag|
-              = tag.user.email
+              - if tag.equal?(photo.tags.last)
+                = tag.user.email
+              - else
+                = tag.user.email + ","
             -# Add a comment
             = button_to "Add a comment!", new_user_photo_comment_path(photo_id: photo.id, user_id: current_user.id), method: :get, :class => "btn btn-primary"
             -# Display comments
+            Comments:
             - photo.comments.each do |c|
               %br
               %span.badge.badge-secondary
